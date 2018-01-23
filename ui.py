@@ -6,7 +6,7 @@ def mainMenuSelection():
         2. Add a record
         3. Update/modify a record
         4. Delete a record
-        5. Quit
+        q. Quit
     ''')
 
     choice = input("Enter a selection: ")
@@ -24,11 +24,21 @@ def searchBy():
         4. Number of catches(greater or equal to)
     ''')
     choice = None
-    while not (choice >= '1' and choice <= '4'):
+    while not (choice >= "1"'" and choice <= "4"'"):
         choice = input("Enter a selection: ")
-        if not (choice >= '1' and choice <= '4'):
+        if not (choice >= "1" and choice <= "4"):
             message("Please enter a valid selection")
-    return choice
+
+    if choice == "1":
+        searchBy = "ID"
+    elif choice == "2":
+        searchBy = "Record holder"
+    elif choice == "3":
+        searchBy = "Country"
+    elif choice == "4":
+        searchBy = "Number of catches"
+
+    return searchBy
 
 
 def message(message):

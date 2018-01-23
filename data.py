@@ -1,6 +1,6 @@
 ''' code references from Lab3 slides/examples '''
 
-import message from ui
+from ui import message
 import sqlite3
 import traceback
 import sys
@@ -13,14 +13,14 @@ initialRecords = [  ('Ian Stewart', 'Canada', 94),
                     ('Chad Taylor', 'USA', 78)]
 
 def setup():
-    ''' initial setup '''
+    ''' initial setup to create table and insert intial records'''
     global db
     global cur
     global initialRecords
 
     try:
-        cur.excute('CREATE table if not exists records ('Chainsaw Juggling Record Holder' VARCHAR(50), 'Country' VARCHAR(25), 'Number of catches' INTEGER'))
-        cur.executemany('INSERT OR IGNORE INTO records values (?,?,?)', initialRecords)
+        cur.execute('CREATE table if not exists records ("Chainsaw_Juggling_Record_Holder" TEXT, Country TEXT, "Number_of_catches" INT)')
+        cur.executemany('INSERT INTO records values (?,?,?) WHERE NOT EXISTS (SELECT * FROM records WHERE 'Chainsaw_Juggling_Record_Holder' = (?))' , initialRecords, initialRecords)
         db.commit() # Ask the database to save changes!
 
     except sqlite3.Error as e:
@@ -30,8 +30,33 @@ def setup():
 
 
 def search(searchOption, searchValue):
+    ''' search for records '''
     global db
     global cur
+
+    try:
+        if searchOption == "ID":
+            cur.execute('SELECT * FROM records WHERE ROWID = (?)', searchValue)
+            for row in cur:
+                print(row)
+
+        elif searchOption == "Record holder":
+            cur.execute("SELECT * FROM records WHERE 'Chainsaw_Juggling_Record_Holder' = (?)", str(searchValue))
+            for row in cur:
+                print(row)
+
+        elif searchOption == "Country":
+            cur.execute("SELECT * FROM records WHERE 'Country' = (?)", str(searchValue))
+            for row in cur:
+                print(row)
+
+        elif searchOption == "Number of catches":
+            cur.execute("SELECT * FROM records WHERE 'Number_of_catches' = (?)", int(searchValue))
+            for row in cur:
+                print(row)
+
+    except sqlite3.Error as e:
+        print("{} error has occured".format(e))
 
 
 def add(recordHolder, country, catches):

@@ -24,7 +24,9 @@ def handleChoice(choice):
 def searchRecord():
     ''' search for record '''
     searchOption = ui.searchBy()
-    searchValue = input("Enter a(n) {} to search the record with".format(searchOption))
+    searchValue = ""
+    while searchValue == "":
+        searchValue = str(input("Enter a(n) {} to search the record with: ".format(searchOption)))
 
     data.search(searchOption, searchValue)
 

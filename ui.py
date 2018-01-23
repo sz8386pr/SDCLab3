@@ -23,19 +23,22 @@ def searchBy():
         3. Country
         4. Number of catches(greater or equal to)
     ''')
-    choice = None
-    while not (choice >= "1"'" and choice <= "4"'"):
-        choice = input("Enter a selection: ")
-        if not (choice >= "1" and choice <= "4"):
+    choice = 0
+    while not (choice >= 1 and choice <= 4):
+        try:
+            choice = int(input("Enter a selection: "))
+            if not (choice >= 1 and choice <= 4):
+                message("Please enter a valid selection")
+        except ValueError:
             message("Please enter a valid selection")
 
-    if choice == "1":
+    if choice == 1:
         searchBy = "ID"
-    elif choice == "2":
+    elif choice == 2:
         searchBy = "Record holder"
-    elif choice == "3":
+    elif choice == 3:
         searchBy = "Country"
-    elif choice == "4":
+    else:
         searchBy = "Number of catches"
 
     return searchBy

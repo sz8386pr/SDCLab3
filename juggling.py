@@ -43,10 +43,13 @@ def addRecord():
     ''' add a new record '''
     recordHolder = input("Enter the name of the record holder: ")
     country = input("Enter the country of origin of the record holder: ")
-    try:
-        catches = int(input("Enter the number of catches: "))
-    except ValueError:
-        ui.message("Enter a valid number")
+
+    while True:
+        try:
+            catches = int(input("Enter the number of catches: "))
+            break
+        except ValueError:
+            ui.message("Enter a valid number")
 
     data.add(recordHolder, country, catches)
 

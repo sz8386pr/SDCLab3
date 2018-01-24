@@ -92,7 +92,7 @@ def add(recordHolder, country, catches):
     try:
         cur.execute("INSERT INTO records values(?,?,?)", (recordHolder, country, catches,))
         db.commit()
-        message("Record ({}, {}, {}) has been added to the database".format(recordHolder, country, catches))
+        message("Record (Record Holder: {}, Country: {}, Catches: {}) has been added to the database".format(recordHolder, country, catches))
     except sqlite3.Error as e:
         print("{} error has occured".format(e))
         traceback.print_exc() # Displays a stack trace, useful for debugging

@@ -1,11 +1,22 @@
-''' code references from Lab3 slides/examples '''
+''' sqlite3 related codes references from Lab3 slides/examples
+cursor.fetchall() reference from https://stackoverflow.com/questions/34463901/how-to-iterate-through-cur-fetchall-in-python'''
 
-from ui import message
+from ui import message, displayRow
 import sqlite3
 import traceback
+import os
 import sys
 
-db = sqlite3.connect("juggling.db") # Creates or opens database file
+dbFolder = "Data"
+dbFile = os.path.join(dbFolder, "juggling.db")
+
+''' makedirs referenced from https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-if-it-does-not-exist '''
+try:
+    os.makedirs(dbFolder)
+except OSError as e:
+    pass #Do nothing if directory exists
+
+db = sqlite3.connect(dbFile) # Creates or opens database file
 cur = db.cursor() # Need a cursor object to perform operations
 ''' Initial records '''
 initialRecords = [  (1, 'Ian Stewart', 'Canada', 94),
@@ -28,6 +39,7 @@ def setup():
         traceback.print_exc() # Displays a stack trace, useful for debugging
         db.rollback()    # Optional - depends on what you are doing with the db
 
+
 def allRecords():
     ''' Display all records in the table '''
     global db
@@ -35,9 +47,8 @@ def allRecords():
 
     try:
         cur.execute('SELECT ROWID, * FROM records')
-
-        for row in cur:
-            message(row)
+        data = cur.fetchall()
+        displayRow(data)
 
     except sqlite3.Error as e:
         print("{} error has occured".format(e))
@@ -50,32 +61,31 @@ def search(searchOption, searchValue):
 
     try:
         if searchOption == "ID":
-            cur.execute("SELECT * FROM records WHERE ROWID = (?)", (searchValue,))
+            cur.execute("SELECT ROWID, * FROM records WHERE ROWID = ?", (searchValue,))
 
         elif searchOption == "Record holder":
-            cur.execute("SELECT * FROM records WHERE 'Chainsaw_Juggling_Record_Holder' = (?)", (searchValue,))
+            cur.execute("SELECT ROWID, * FROM records WHERE Chainsaw_Juggling_Record_Holder = ?  COLLATE NOCASE", (searchValue,))
+            print(searchValue)
 
         elif searchOption == "Country":
-            cur.execute("SELECT * FROM records WHERE 'Country' = (?)", (searchValue,))
-
+            cur.execute("SELECT ROWID, * FROM records WHERE Country = ? COLLATE NOCASE", (searchValue,))
+            print(searchValue)
         elif searchOption == "Number of catches":
-            cur.execute("SELECT * FROM records WHERE 'Number_of_catches' = (?)", (searchValue,))
+            cur.execute("SELECT ROWID, * FROM records WHERE Number_of_catches = ?", (searchValue,))
+            print(searchValue)
 
-        rowCount = 0
-
-        for row in cur:
-            message(row)
-            rowCount+= 1
+        data = cur.fetchall()
+        rowCount = displayRow(data)
 
         if rowCount == 0:
-            message("There are no record that matches {}". format(searchOption))
-
+            message("There are no record with matching {}". format(searchOption))
 
     except sqlite3.Error as e:
         print("{} error has occured".format(e))
 
 
 def add(recordHolder, country, catches):
+    ''' Add a new record '''
     global db
     global cur
 
@@ -89,19 +99,47 @@ def add(recordHolder, country, catches):
         db.rollback()    # Optional - depends on what you are doing with the db
 
 
-def update(updateColumn, updateValue, id):
+def checkID(id):
+    ''' Checks if matching ID exists in the record. Used for update/delete '''
     global db
     global cur
 
     try:
-        cur.execute("UPDATE records SET (?) = (?) WHERE ROWID = (?)", (updateColumn, updateValue, id,))
+        cur.execute("SELECT ROWID, * FROM records WHERE ROWID = ?", (id,))
+        data = cur.fetchall()
+        rowCount = displayRow(data)
+
+        if rowCount > 0:
+            return True
+
+        else:
+            message("There are no record with matching ID")
+            return False
+
+    except sqlite3.Error as e:
+        print("{} error has occured".format(e))
+        return False
+
+
+def update(updateColumn, updateValue, id):
+    ''' Update/modify a record
+    update reference from https://stackoverflow.com/questions/25387537/sqlite3-operationalerror-near-syntax-error'''
+    global db
+    global cur
+
+    try:
+        cur.execute("UPDATE records SET {} = (?) WHERE ROWID = (?)".format(updateColumn), (updateValue, id,))
         db.commit()
+        message("New value {} has been updated".format(updateValue))
+
     except sqlite3.Error as e:
         print("{} error has occured".format(e))
         traceback.print_exc() # Displays a stack trace, useful for debugging
         db.rollback()    # Optional - depends on what you are doing with the db
 
+
 def delete(id):
+    ''' delete a row by id '''
     global db
     global cur
 
@@ -109,6 +147,7 @@ def delete(id):
         cur.execute("DELETE FROM records WHERE ROWID =(?)", (id,))
         db.commit()
         message("ID {} has been deleted from the database".format(id))
+
     except sqlite3.Error as e:
         print("{} error has occured".format(e))
         traceback.print_exc() # Displays a stack trace, useful for debugging
@@ -116,6 +155,7 @@ def delete(id):
 
 
 def quit():
+    ''' Close DB '''
     global db
 
     message("Closing database")

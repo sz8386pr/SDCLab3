@@ -82,6 +82,33 @@ def updateBy():
     return updateColumn, updateValue
 
 
+def confirm(updateOrDelete):
+    while True:
+        confirm = input("Are you sure you want to {} this record from the data? (Y/N)".format(updateOrDelete))
+        if confirm.upper() == "Y" or confirm.upper() == "N":
+            return confirm.upper()
+        else:
+            message("Please enter Y or N")
+
 def message(message):
     '''Output for the user'''
     print(message)
+
+
+def displayRow(data):
+    ''' User friendly display of return data '''
+    rowCount = len(data)
+
+    if rowCount > 0:
+        print("{:^6} {:15} {:10} {:7}".format("ID","Record Holder", "Country", "Catches") )
+        for row in data:
+            id = row[0]
+            name = row[1]
+            country = row[2]
+            catches = row[3]
+
+            print("{:^6} {:15} {:10} {:^7}".format(id, name, country, catches))
+
+        print("{} record(s) has been found".format(rowCount))
+
+    return rowCount

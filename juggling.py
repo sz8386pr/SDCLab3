@@ -58,9 +58,14 @@ def updateRecord():
     except ValueError:
         ui.message("Enter a valid number")
 
-    updateColumn, updateValue = ui.updateBy()
+    idCheck = data.checkID(id)
 
-    data.update(updateColumn, updateValue, id)
+    if idCheck:
+        confirm = ui.confirm("update")
+
+        if confirm == "Y":
+            updateColumn, updateValue = ui.updateBy()
+            data.update(updateColumn, updateValue, id)
 
 
 def deleteRecord():
@@ -70,7 +75,13 @@ def deleteRecord():
     except ValueError:
         ui.message("Enter a valid number")
 
-    data.delete(id)
+    idCheck = data.checkID(id)
+
+    if idCheck:
+        confirm = ui.confirm("delete")
+
+        if confirm == "Y":
+            data.delete(id)
 
 
 def quit():

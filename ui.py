@@ -51,6 +51,7 @@ def searchBy():
 
     return searchBy
 
+
 def updateBy():
     ''' update column option '''
     print('''

@@ -7,27 +7,27 @@ import traceback
 import os
 import sys
 
-dbFolder = "Data"
-dbFile = os.path.join(dbFolder, "juggling.db")
-
-''' makedirs referenced from https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-if-it-does-not-exist '''
-try:
-    os.makedirs(dbFolder)
-except OSError as e:
-    pass #Do nothing if directory exists
-
-db = sqlite3.connect(dbFile) # Creates or opens database file
-cur = db.cursor() # Need a cursor object to perform operations
-''' Initial records '''
-initialRecords = [  (1, 'Ian Stewart', 'Canada', 94),
-                    (2, 'Aaron Gregg', 'Canada', 88),
-                    (3, 'Chad Taylor', 'USA', 78)]
-
 def setup():
     ''' initial setup to create table and insert intial records'''
+    dbFolder = "Data"
+    dbFile = os.path.join(dbFolder, "juggling.db")
+
+    ''' makedirs referenced from https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-if-it-does-not-exist '''
+    try:
+        os.makedirs(dbFolder)
+    except OSError as e:
+        pass #Do nothing if directory exists
+
     global db
     global cur
-    global initialRecords
+
+    db = sqlite3.connect(dbFile) # Creates or opens database file
+    cur = db.cursor() # Need a cursor object to perform operations
+    
+    ''' Initial records '''
+    initialRecords = [  (1, 'Ian Stewart', 'Canada', 94),
+                        (2, 'Aaron Gregg', 'Canada', 88),
+                        (3, 'Chad Taylor', 'USA', 78)]
 
     try:
         cur.execute('CREATE table if not exists records ("Chainsaw_Juggling_Record_Holder" TEXT, Country TEXT, "Number_of_catches" INT)')

@@ -1,3 +1,4 @@
 hello_sqlite_python/
 __pycache__/
 juggling.db*
+Data/

@@ -2,7 +2,10 @@ import ui, data
 
 def handleChoice(choice):
     ''' Main menu selection handling '''
-    if choice == '1':
+    if choice == '0':
+        displayTable()
+
+    elif choice == '1':
         searchRecord()
 
     elif choice == '2':
@@ -19,6 +22,11 @@ def handleChoice(choice):
 
     else:
         ui.message("Please enter a valid selection number")
+
+
+def displayTable():
+    ''' Display records table '''
+    data.allRecords()
 
 
 def searchRecord():
@@ -50,7 +58,9 @@ def updateRecord():
     except ValueError:
         ui.message("Enter a valid number")
 
-    data.update(id)
+    updateColumn, updateValue = ui.updateBy()
+
+    data.update(updateColumn, updateValue, id)
 
 
 def deleteRecord():
@@ -64,12 +74,14 @@ def deleteRecord():
 
 
 def quit():
+    ''' Close db connection and end the program '''
     data.quit()
     ui.message("End of program")
 
 
 def main():
 
+    ui.welcome()
     data.setup()
 
     quit = 'q'
